@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
+const path = require("path");
 require("dotenv").config();
 require("./Connections/connection");
 const cors = require("cors");
@@ -12,9 +13,17 @@ app.use(cors());
 app.use("/api/v1", UserAPI);
 app.use("/api/v2", TaskAPI);
 
-// app.use("/", (req, res) => {
-//   res.send("Hello from backend");
-// });
+app.use(express.static("client/build"));
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.resolve(__dirname + "/client/build/index.html"),
+    function (err) {
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
+});
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log("Server is running at PORT " + PORT));
